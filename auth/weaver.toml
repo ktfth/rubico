@@ -1,0 +1,14 @@
+[auth.routes]
+component = "auth/routes"
+
+[[auth.routes.methods]]
+name = "RegisterLogin"
+route = "/registerlogin"
+
+[[auth.routes.methods]]
+name = "Verify"
+route = "/verify"
+
+[[auth.routes.methods]]
+name = "ValidateToken"
+route = "/validatetoken"
