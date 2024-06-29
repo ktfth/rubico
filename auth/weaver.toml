@@ -1,3 +1,7 @@
+[auth]
+component = "auth"
+listen = "localhost:8080"
+
 [auth.routes]
 component = "auth/routes"
 

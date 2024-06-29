@@ -23,10 +23,6 @@ func ConnectDB(ctx context.Context) (*mongo.Client, error) {
 		return nil, err
 	}
 
-	// Send a ping to confirm a successful connection
-	if err = client.Database("admin").RunCommand(ctx, nil).Err(); err != nil {
-		return nil, err
-	}
-	log.Println("Pinged your deployment. You successfully connected to MongoDB!")
+	log.Println("Connected to MongoDB")
 	return client, nil
 }
