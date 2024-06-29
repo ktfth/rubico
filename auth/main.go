@@ -4,9 +4,11 @@ import (
 	"context"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/ServiceWeaver/weaver"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -30,6 +32,24 @@ func (a *api) Start(ctx context.Context) error {
 	}
 	a.mongodbClient = client
 	log.Println("Connected to MongoDB")
+
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour) // Executar a cada hora (ajuste conforme necessário)
+		defer ticker.Stop()
+
+		for {
+			select {
+			case <-ctx.Done():
+				// O contexto foi cancelado, encerrar a goroutine
+				return
+			case <-ticker.C:
+				// Verificar e remover tokens expirados do banco de dados
+				if err := expireTokens(ctx, a.mongodbClient); err != nil {
+					log.Printf("Erro ao expirar tokens: %v", err)
+				}
+			}
+		}
+	}()
 
 	// Inicializa as rotas
 	a.AuthRoutes.DB = a.mongodbClient // Passa o cliente MongoDB para AuthRoutes
@@ -61,6 +81,23 @@ func (a *api) Start(ctx context.Context) error {
 	}
 	log.Println("Listening on", addr)
 	return http.ListenAndServe(addr, nil)
+}
+
+func expireTokens(ctx context.Context, client *mongo.Client) error {
+	// 1. Obter a coleção de tokens
+	collection := client.Database("rubico").Collection("tokens")
+
+	// 2. Definir o filtro para encontrar tokens expirados
+	filter := bson.M{"expiresAt": bson.M{"$lt": time.Now()}}
+
+	// 3. Remover os tokens expirados
+	result, err := collection.DeleteMany(ctx, filter)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Tokens expirados removidos: %d", result.DeletedCount)
+	return nil
 }
 
 func main() {
