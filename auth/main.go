@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,6 +24,9 @@ type api struct {
 	routes.AuthRoutes
 	mongodbClient *mongo.Client
 }
+
+////go:embed frontend/index.html
+//var indexHtml string
 
 // Start is called by Service Weaver to start the API component.
 func (a *api) Start(ctx context.Context) error {
@@ -69,10 +73,19 @@ func (a *api) Start(ctx context.Context) error {
 		a.AuthRoutes.ValidateToken(ctx, w, req)
 	}
 
+	/*indexHandler := func(w http.ResponseWriter, req *http.Request) {
+		// Serve html file
+		if _, err := fmt.Fprint(w, indexHtml); err != nil {
+			log.Fatal("error writing index.html to response writer", "err", err)
+		}
+	}*/
+
 	// Registra os manipuladores de rota
 	http.HandleFunc("/registerlogin", registerLoginHandler)
 	http.HandleFunc("/verify", verifyHandler)
 	http.HandleFunc("/validatetoken", validateTokenHandler)
+	//http.HandleFunc("/", indexHandler)
+	http.Handle("/", http.FileServer(http.Dir("./frontend")))
 
 	// Inicia o servidor HTTP
 	addr := os.Getenv("LISTEN_ADDR")

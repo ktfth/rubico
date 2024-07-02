@@ -4,7 +4,8 @@ go 1.23rc1
 
 require (
 	github.com/ServiceWeaver/weaver v0.24.2
-	github.com/gorilla/sessions v1.3.0
+	github.com/gin-contrib/sessions v1.0.1
+	github.com/joho/godotenv v1.5.1
 	github.com/resend/resend-go/v2 v2.9.0
 	go.mongodb.org/mongo-driver v1.16.0
 	go.opentelemetry.io/otel/trace v1.19.0
@@ -22,7 +23,6 @@ require (
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
-	github.com/gin-contrib/sessions v1.0.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.9.1 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
@@ -37,11 +37,12 @@ require (
 	github.com/google/uuid v1.3.1 // indirect
 	github.com/gorilla/context v1.1.2 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/joho/godotenv v1.5.1 // indirect
+	github.com/gorilla/sessions v1.3.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lightstep/varopt v1.4.0 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
