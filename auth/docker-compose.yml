@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  auth:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/rubico # Conecta ao container do MongoDB
+      - SESSION_SECRET=seu_segredo_forte_e_aleatorio # Defina um segredo forte para as sessões
+      - RESEND_API_KEY=sua_chave_de_api_do_resend
+
+  mongodb:
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

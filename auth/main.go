@@ -1,10 +1,12 @@
 package main
 
 import (
+	"auth/routes"
 	"context"
 	_ "embed"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/joho/godotenv"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"go.mongodb.org/mongo-driver/bson"
 	"log"
 	"net/http"
@@ -15,8 +17,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"auth/config"
-	"auth/routes"
+	_ "auth/docs"
 )
+
+// swagger embed files
 
 // api is the main application component.
 type api struct {
@@ -73,18 +77,15 @@ func (a *api) Start(ctx context.Context) error {
 		a.AuthRoutes.ValidateToken(ctx, w, req)
 	}
 
-	/*indexHandler := func(w http.ResponseWriter, req *http.Request) {
-		// Serve html file
-		if _, err := fmt.Fprint(w, indexHtml); err != nil {
-			log.Fatal("error writing index.html to response writer", "err", err)
-		}
-	}*/
-
 	// Registra os manipuladores de rota
 	http.HandleFunc("/registerlogin", registerLoginHandler)
 	http.HandleFunc("/verify", verifyHandler)
 	http.HandleFunc("/validatetoken", validateTokenHandler)
-	//http.HandleFunc("/", indexHandler)
+	http.Handle("/docs", http.FileServer(http.Dir("./docs")))
+	http.Handle(
+		"/swagger/",
+		httpSwagger.WrapHandler,
+	)
 	http.Handle("/", http.FileServer(http.Dir("./frontend")))
 
 	// Inicia o servidor HTTP
@@ -113,6 +114,25 @@ func expireTokens(ctx context.Context, client *mongo.Client) error {
 	return nil
 }
 
+// @title           Rubico API
+// @version         0.0
+// @description     Magic Authentication
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    https://kaeyosthaeron.com
+// @contact.email  kaeyosthaeron@gmailc.om
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	err := godotenv.Load()
 	if err != nil {

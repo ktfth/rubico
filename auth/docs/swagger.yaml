@@ -1,0 +1,133 @@
+basePath: /
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: kaeyosthaeron@gmailc.om
+    name: API Support
+    url: https://kaeyosthaeron.com
+  description: Magic Authentication
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Rubico API
+  version: "0.0"
+paths:
+  /registerlogin:
+    post:
+      consumes:
+      - application/json
+      description: Registers a new user or logs in an existing user with a magic link.
+      parameters:
+      - description: User email address
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Magic link sent successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Invalid request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register or login a user
+      tags:
+      - auth
+  /validatetoken:
+    get:
+      consumes:
+      - application/json
+      description: Validates the provided authentication token.
+      parameters:
+      - description: Bearer token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token is valid
+          schema:
+            additionalProperties: true
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Validate token
+      tags:
+      - auth
+  /verify:
+    get:
+      consumes:
+      - application/json
+      description: Verifies the magic link token and authenticates the user.
+      parameters:
+      - description: Magic link token
+        in: query
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User authenticated successfully
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Verify magic link
+      tags:
+      - auth
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

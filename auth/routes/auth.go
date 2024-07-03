@@ -26,6 +26,18 @@ type AuthRoutes struct {
 	DB                             *mongo.Client
 }
 
+// RegisterLogin handles user registration/login.
+// @Summary Register or login a user
+// @Description Registers a new user or logs in an existing user with a magic link.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param email body string true "User email address"
+// @Param password body string true "User password"
+// @Success 201 {object} map[string]string "Magic link sent successfully"
+// @Failure 400 {object} map[string]string "Invalid request"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /registerlogin [post]
 func (r *AuthRoutes) RegisterLogin(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	// 1. Decodificar a requisição (JSON esperado)
 	var user models.User
@@ -105,9 +117,18 @@ func (r *AuthRoutes) RegisterLogin(ctx context.Context, w http.ResponseWriter, r
 	json.NewEncoder(w).Encode(map[string]string{"message": "Link mágico enviado com sucesso"})
 }
 
-//var key = []byte("EET9YRMRT8I+KHColtU9MbamsW8dwqAd/SQlaOERvoU=")
-
 // Verify handles the verification process when a user clicks on the magic link.
+// @Summary      Verify magic link
+// @Description  Verifies the magic link token and authenticates the user.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        token   query      string  true  "Magic link token"
+// @Success      200     {object}  map[string]string "User authenticated successfully"
+// @Failure      400     {object}  map[string]string "Bad Request"
+// @Failure      401     {object}  map[string]string "Unauthorized"
+// @Failure      500     {object}  map[string]string "Internal server error"
+// @Router       /verify [get]
 func (r *AuthRoutes) Verify(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	err := godotenv.Load()
 	if err != nil {
@@ -170,6 +191,15 @@ func (r *AuthRoutes) Verify(ctx context.Context, w http.ResponseWriter, req *htt
 }
 
 // ValidateToken validates the provided token.
+// @Summary      Validate token
+// @Description  Validates the provided authentication token.
+// @Tags         auth
+// @Accept       json
+// @Produce      json
+// @Param        Authorization  header    string  true  "Bearer token"
+// @Success      200  {object}  map[string]interface{} "Token is valid"
+// @Failure      401  {object}  map[string]string      "Unauthorized"
+// @Router       /validatetoken [get]
 func (r *AuthRoutes) ValidateToken(ctx context.Context, w http.ResponseWriter, req *http.Request) {
 	// 1. Obter o token do cabeçalho Authorization
 	authHeader := req.Header.Get("Authorization")
